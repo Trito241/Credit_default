@@ -14,6 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # Choisir la version de Python que vous utilisez
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
       # Set up the Heroku CLI
       - name: Set up Heroku CLI
         run: |
@@ -28,11 +39,11 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
-      # Deploy to Heroku by pushing to the Heroku remote
+      # Add Heroku remote
+      - name: Add Heroku remote
+        run: git remote add heroku https://git.heroku.com/credit-default-bis.git
+
+      # Push to Heroku (Deploy)
       - name: Deploy to Heroku
         run: |
-          # Add Heroku remote
-          git remote add heroku https://git.heroku.com/credit-default-bis.git
-          
-          # Push the code to Heroku
-          git push https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/credit-default-bis.git main
+          git push heroku main
