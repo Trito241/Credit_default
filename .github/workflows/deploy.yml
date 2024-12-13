@@ -18,5 +18,5 @@ jobs:
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
-    - name: Deploy to Heroku
+    - name: Heroku
       run: git push https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/credit-default-bis.git main
