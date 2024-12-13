@@ -10,18 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up the Heroku CLI
       - name: Set up Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
           echo "Heroku CLI is installed"
 
+      # Login to Heroku using the HEROKU_API_KEY stored in GitHub secrets
       - name: Login to Heroku
-        run: echo ${{ secrets.HEROKU_API_KEY }} | heroku auth:token
+        run: |
+          echo "Logging in to Heroku"
+          echo ${{ secrets.HEROKU_API_KEY }} | heroku auth:token
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
+      # Deploy to Heroku by pushing to the Heroku remote
       - name: Deploy to Heroku
         run: |
+          # Add Heroku remote
           git remote add heroku https://git.heroku.com/credit-default-bis.git
+          
+          # Push the code to Heroku
           git push https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/credit-default-bis.git main
