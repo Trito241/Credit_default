@@ -14,12 +14,9 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Login to Heroku
-      uses: akhileshns/heroku-deploy@v3.12.12
-      with:
-        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-        heroku_app_name: "CreditDefault" # Remplacez par le nom de votre app Heroku
-        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+      run: echo ${{ secrets.HEROKU_API_KEY }} | heroku auth:token
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
     - name: Deploy to Heroku
-      run: |
-        git push https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/VotreNomDApplicationHeroku.git main
+      run: git push https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/credit-default-bis.git main
