@@ -3,7 +3,7 @@ name: Deploy to Heroku
 on:
   push:
     branches:
-      - main
+      - flask_app
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'  # Choisir la version de Python que vous utilisez
+          python-version: '3.11'  # Choisir la version de Python que vous utilisez
 
       # Install dependencies
       - name: Install dependencies
@@ -46,4 +46,5 @@ jobs:
       # Push to Heroku (Deploy)
       - name: Deploy to Heroku
         run: |
-          git push heroku main
+          git push heroku flask_app
+
