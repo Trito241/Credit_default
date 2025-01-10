@@ -28,8 +28,7 @@ jobs:
     # Étape 4 : Exécuter les tests
     - name: Run Tests
       run: |
-        pytest test_flask_app.py  
-
+        pytest
     # Étape 5 : Si les tests passent, déployer sur Heroku
     - name: Install Heroku CLI
       run: curl https://cli-assets.heroku.com/install.sh | sh
