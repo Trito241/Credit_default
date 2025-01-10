@@ -1,50 +1,47 @@
-name: Deploy to Heroku
+name: Deploy and Test
 
 on:
   push:
-    branches:
-      - flask_app
+    branches: [ "main" ]  # Branche à surveiller
 
 jobs:
-  deploy:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code from the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+    # Étape 1 : Vérifier le code
+    - uses: actions/checkout@v3
 
-      # Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.11'  # Choisir la version de Python que vous utilisez
+    # Étape 2 : Configurer Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11.9"
 
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+    # Étape 3 : Installer les dépendances
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      # Set up the Heroku CLI
-      - name: Set up Heroku CLI
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
-          echo "Heroku CLI is installed"
+    # Étape 4 : Exécuter les tests
+    - name: Run Tests
+      run: |
+        pytest tests/  
 
-      # Login to Heroku using the HEROKU_API_KEY stored in GitHub secrets
-      - name: Login to Heroku
-        run: |
-          echo "Logging in to Heroku"
-          echo ${{ secrets.HEROKU_API_KEY }} | heroku auth:token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+    # Étape 5 : Si les tests passent, déployer sur Heroku
+    - name: Install Heroku CLI
+      run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Add Heroku remote
-      - name: Add Heroku remote
-        run: git remote add heroku https://git.heroku.com/credit-default-bis.git
+    - name: Login to Heroku
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: echo $HEROKU_API_KEY | heroku auth:token
 
-      # Push to Heroku (Deploy)
-      - name: Deploy to Heroku
-        run: |
-          git push heroku flask_app
+    - name: Deploy to Heroku
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: |
+        heroku git:remote -a stormy-fjord-33387
+        git push heroku main
 
