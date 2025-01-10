@@ -2,7 +2,8 @@ name: Deploy and Test
 
 on:
   push:
-    branches: [ "main" ]  # Branche à surveiller
+    branches:
+      - "temp_branch"  # Branche à surveillerr
 
 jobs:
   test-and-deploy:
@@ -27,21 +28,23 @@ jobs:
     # Étape 4 : Exécuter les tests
     - name: Run Tests
       run: |
-        pytest tests/  
+        pytest test_flask_app.py  
 
     # Étape 5 : Si les tests passent, déployer sur Heroku
     - name: Install Heroku CLI
       run: curl https://cli-assets.heroku.com/install.sh | sh
 
+    # Étape 6 : Login to Heroku
     - name: Login to Heroku
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: echo $HEROKU_API_KEY | heroku auth:token
 
-    - name: Deploy to Heroku
-      env:
-        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+    # Étape 7 : Ajouter Heroku remote et déployer
+    - name: Add Heroku remote
       run: |
-        heroku git:remote -a stormy-fjord-33387
-        git push heroku main
+        git remote add heroku https://git.heroku.com/stormy-fjord-33387.git
+
+    - name: Deploy to Heroku
+      run: git push heroku temp_branch:main
 
