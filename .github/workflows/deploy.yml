@@ -34,7 +34,7 @@ jobs:
     # Étape 5 : Exécuter les tests
     #- name: Run Tests
     #  run: |
-    #   pytests
+    #   pytest test_flask_app.py
 
     # Étape 6 : Installer Heroku CLI
     - name: Install Heroku CLI
@@ -46,6 +46,11 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
         echo $HEROKU_API_KEY | heroku auth:token
+        echo "machine api.heroku.com" > ~/.netrc
+        echo "  login $HEROKU_API_KEY" >> ~/.netrc
+        echo "machine git.heroku.com" >> ~/.netrc
+        echo "  password $HEROKU_API_KEY" >> ~/.netrc
+        chmod 600 ~/.netrc
 
     # Étape 8 : Ajouter Heroku remote
     - name: Add Heroku remote
