@@ -3,7 +3,7 @@ name: Deploy and Test
 on:
   push:
     branches:
-      - "temp_branch"  # Branche à surveillerr
+      - "temp_branch"  # Branche à surveiller
 
 jobs:
   test-and-deploy:
@@ -25,25 +25,37 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # Étape 4 : Exécuter les tests
+    # Étape 4 : Vérifier la présence des fichiers
+    - name: Verify required files
+      run: |
+        ls -R ./data
+        head -n 5 ./data/data_test.csv
+
+    # Étape 5 : Exécuter les tests
     - name: Run Tests
       run: |
         pytest
-    # Étape 5 : Si les tests passent, déployer sur Heroku
+
+    # Étape 6 : Installer Heroku CLI
     - name: Install Heroku CLI
       run: curl https://cli-assets.heroku.com/install.sh | sh
 
-    # Étape 6 : Login to Heroku
+    # Étape 7 : Login to Heroku
     - name: Login to Heroku
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      run: echo $HEROKU_API_KEY | heroku auth:token
+      run: |
+        echo $HEROKU_API_KEY | heroku auth:token
 
-    # Étape 7 : Ajouter Heroku remote et déployer
+    # Étape 8 : Ajouter Heroku remote
     - name: Add Heroku remote
       run: |
-        git remote add heroku https://git.heroku.com/stormy-fjord-33387.git
+        if git remote | grep -q heroku; then
+          git remote set-url heroku https://git.heroku.com/stormy-fjord-33387.git
+        else
+          git remote add heroku https://git.heroku.com/stormy-fjord-33387.git
+        fi
 
+    # Étape 9 : Déployer sur Heroku
     - name: Deploy to Heroku
       run: git push heroku temp_branch:main
-
