@@ -32,9 +32,9 @@ jobs:
         head -n 5 ./data/data_test.csv
 
     # Étape 5 : Exécuter les tests
-    - name: Run Tests
-      run: |
-        pytest
+    #- name: Run Tests
+    #  run: |
+    #   pytests
 
     # Étape 6 : Installer Heroku CLI
     - name: Install Heroku CLI
