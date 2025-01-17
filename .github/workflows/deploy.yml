@@ -13,56 +13,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Étape 1 : Vérifier le code
-    - uses: actions/checkout@v3
+      # Step 1: Checkout the code with full depth
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # <-- This ensures we unshallow the clone
 
-    # Étape 2 : Configurer Python
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11.9"
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.9"
 
-    # Étape 3 : Installer les dépendances
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    # Étape 4 : Vérifier la présence des fichiers
-    - name: Verify required files
-      run: |
-        ls -R ./data
-        head -n 5 ./data/data_test.csv.zip
+      # Step 4: Verify required files
+      - name: Verify required files
+        run: |
+          ls -R ./data
+          head -n 5 ./data/data_test.csv.zip
 
-    # Étape 5 : Exécuter les tests
-    - name: Run Tests
-      run: |
-        pytest test_flask_app.py
+      # Step 5: Run tests
+      - name: Run Tests
+        run: |
+          pytest test_flask_app.py
 
-    # Étape 6 : Installer Heroku CLI
-    # - name: Install Heroku CLI
-      # run: curl https://cli-assets.heroku.com/install.sh | sh
+      # Step 6: (Optional) Install Heroku CLI
+      - name: Install Heroku CLI
+        if: always()
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
 
-    # Étape 7 : Configuration des credentials pour Heroku
-    # - name: Configure Heroku credentials
-      # env:
-        # HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      # run: |
-        # echo "machine api.heroku.com" > ~/.netrc
-        # echo "  login $HEROKU_API_KEY" >> ~/.netrc
-        # echo "machine git.heroku.com" >> ~/.netrc
-        # echo "  password $HEROKU_API_KEY" >> ~/.netrc
-        # chmod 600 ~/.netrc
+      # Step 7: (Optional) Configure Heroku credentials
+      - name: Configure Heroku credentials
+        if: always()
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          echo "machine api.heroku.com" > ~/.netrc
+          echo "  login $HEROKU_API_KEY" >> ~/.netrc
+          echo "machine git.heroku.com" >> ~/.netrc
+          echo "  password $HEROKU_API_KEY" >> ~/.netrc
+          chmod 600 ~/.netrc
 
-    # Étape 8 : Ajouter le remote Heroku
-    # - name: Add Heroku remote
-      # run: |
-        # if git remote | grep -q heroku; then
-          # git remote set-url heroku https://git.heroku.com/credit-default-01.git
-        # else
-          # git remote add heroku https://git.heroku.com/credit-default-01.git
-        # fi
+      # Step 8: (Optional) Add Heroku remote
+      - name: Add Heroku remote
+        if: always()
+        run: |
+          if git remote | grep -q heroku; then
+            git remote set-url heroku https://git.heroku.com/credit-default-01.git
+          else
+            git remote add heroku https://git.heroku.com/credit-default-01.git
+          fi
 
-    # Étape 9 : Déployer sur Heroku
-    # - name: Deploy to Heroku
-      # run: git push heroku temp_branch:main --force
+      # Step 9: (Optional) Deploy to Heroku
+      - name: Deploy to Heroku
+        if: always()
+        run: |
+          # Force-push to main on Heroku
+          git push heroku temp_branch:main --force
