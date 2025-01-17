@@ -29,38 +29,38 @@ jobs:
     - name: Verify required files
       run: |
         ls -R ./data
-        head -n 5 ./data/data_test.csv
+        head -n 5 ./data/data_test.csv.zip
 
     # Étape 5 : Exécuter les tests
-    #- name: Run Tests
-    #  run: |
-    #   pytest test_flask_app.py
+    - name: Run Tests
+      run: |
+       pytest test_flask_app.py
 
     # Étape 6 : Installer Heroku CLI
     - name: Install Heroku CLI
       run: curl https://cli-assets.heroku.com/install.sh | sh
 
     # Étape 7 : Login to Heroku
-    - name: Login to Heroku
-      env:
-        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      run: |
-        echo $HEROKU_API_KEY | heroku auth:token
-        echo "machine api.heroku.com" > ~/.netrc
-        echo "  login $HEROKU_API_KEY" >> ~/.netrc
-        echo "machine git.heroku.com" >> ~/.netrc
-        echo "  password $HEROKU_API_KEY" >> ~/.netrc
-        chmod 600 ~/.netrc
+    #- name: Login to Heroku
+    #  env:
+    #    HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+    #  run: |
+    #    echo $HEROKU_API_KEY | heroku auth:token
+    #    echo "machine api.heroku.com" > ~/.netrc
+    #    echo "  login $HEROKU_API_KEY" >> ~/.netrc
+    #    echo "machine git.heroku.com" >> ~/.netrc
+    #    echo "  password $HEROKU_API_KEY" >> ~/.netrc
+    #    chmod 600 ~/.netrc
 
     # Étape 8 : Ajouter Heroku remote
-    - name: Add Heroku remote
-      run: |
-        if git remote | grep -q heroku; then
-          git remote set-url heroku https://git.heroku.com/stormy-fjord-33387.git
-        else
-          git remote add heroku https://git.heroku.com/stormy-fjord-33387.git
-        fi
+    #- name: Add Heroku remote
+    #  run: |
+    #    if git remote | grep -q heroku; then
+    #      git remote set-url heroku https://git.heroku.com/stormy-fjord-33387.git
+    #    else
+    #      git remote add heroku https://git.heroku.com/stormy-fjord-33387.git
+    #    fi
 
     # Étape 9 : Déployer sur Heroku
-    - name: Deploy to Heroku
-      run: git push heroku temp_branch:main
+    #- name: Deploy to Heroku
+    #  run: git push heroku temp_branch:main
