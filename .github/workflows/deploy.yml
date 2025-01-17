@@ -40,12 +40,11 @@ jobs:
     - name: Install Heroku CLI
       run: curl https://cli-assets.heroku.com/install.sh | sh
 
-    # Étape 7 : Login to Heroku
-    - name: Login to Heroku
+    # Étape 7 : Configuration des credentials pour Heroku
+    - name: Configure Heroku credentials
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
-        echo $HEROKU_API_KEY | heroku auth:token
         echo "machine api.heroku.com" > ~/.netrc
         echo "  login $HEROKU_API_KEY" >> ~/.netrc
         echo "machine git.heroku.com" >> ~/.netrc
