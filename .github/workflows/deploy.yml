@@ -34,7 +34,7 @@ jobs:
     # Étape 5 : Exécuter les tests
     - name: Run Tests
       run: |
-       pytest test_flask_app.py
+        pytest test_flask_app.py
 
     # Étape 6 : Installer Heroku CLI
     - name: Install Heroku CLI
@@ -51,19 +51,15 @@ jobs:
         echo "  password $HEROKU_API_KEY" >> ~/.netrc
         chmod 600 ~/.netrc
 
-    # Étape 8 : Ajouter Heroku remote
+    # Étape 8 : Ajouter le remote Heroku
     - name: Add Heroku remote
       run: |
         if git remote | grep -q heroku; then
-          git remote set-url heroku https://stormy-fjord-33387-5e66c1c7a089.herokuapp.com/
+          git remote set-url heroku https://git.heroku.com/stormy-fjord-33387.git
         else
-          git remote add heroku https://stormy-fjord-33387-5e66c1c7a089.herokuapp.com/
+          git remote add heroku https://git.heroku.com/stormy-fjord-33387.git
         fi
 
-    # Étape 9 : Récupérer les modifications de Heroku
-    - name: Pull changes from Heroku
-     run: git pull heroku main --rebase
-
-    # Étape 10 : Déployer sur Heroku
+    # Étape 9 : Déploiement sur Heroku
     - name: Deploy to Heroku
       run: git push heroku temp_branch:main
