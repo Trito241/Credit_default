@@ -60,6 +60,10 @@ jobs:
           git remote add heroku https://git.heroku.com/stormy-fjord-33387.git
         fi
 
-    # Étape 9 : Déployer sur Heroku
+    # Étape 9 : Récupérer les modifications de Heroku
+    - name: Pull changes from Heroku
+      run: git pull heroku main --rebase
+
+    # Étape 10 : Déployer sur Heroku
     - name: Deploy to Heroku
-      run: git push heroku temp_branch:main --force
+      run: git push heroku temp_branch:main
