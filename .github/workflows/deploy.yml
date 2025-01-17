@@ -62,4 +62,4 @@ jobs:
 
     # Étape 9 : Déployer sur Heroku
     - name: Deploy to Heroku
-      run: git push heroku temp_branch:main
+      run: git push heroku temp_branch:main --force
