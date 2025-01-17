@@ -11,7 +11,7 @@ flask_app = Flask(__name__)
 # Spécifiez le chemin vers le fichier model.pkl et le fichier input_example.json
 model_path = './data/model.pkl'
 json_path = './data/input_example.json'
-data_path = './data/data_test.csv'
+data_path = './data/data_test.csv.zip'
 
 # Charger le fichier JSON des features 
 with open(json_path, 'r') as f:
