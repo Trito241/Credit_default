@@ -61,8 +61,8 @@ jobs:
         fi
 
     # Étape 9 : Récupérer les modifications de Heroku
-    - name: Pull changes from Heroku
-      run: git pull heroku main --rebase
+    #- name: Pull changes from Heroku
+    #  run: git pull heroku main --rebase
 
     # Étape 10 : Déployer sur Heroku
     - name: Deploy to Heroku
