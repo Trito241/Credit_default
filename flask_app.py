@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
+import shap
 import pickle
 import json
 import pandas as pd
 import numpy as np
-
+import plotly.graph_objects as go
 
 # Créer une instance de l'application Flask
 flask_app = Flask(__name__)
@@ -42,9 +43,9 @@ def create_df_proba(df, seuil:float):
 
 
 model, data_test = load()
-seuil_predict = 0.50  #cf. travaux de modélisation 
+seuil_predict = 0.20  #cf. travaux de modélisation 
 pred_data = create_df_proba(data_test, seuil_predict)
-
+explainer = shap.LinearExplainer(model, data_test)
 
 # Route pour la page d'accueil
 @flask_app.route('/', methods=['GET'])
@@ -94,6 +95,83 @@ def predict():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+# Route pour afficher la jauge de probabilité
+@flask_app.route('/gauge', methods=['POST'])
+def gauge():
+    """visualisation de la probabilité de défaut d'un client donné sous forme de jauge"""
+    item = request.get_json()
+    client_num = item.get("client_num")
+    
+    # Récupérer la probabilité et la décision
+    value = pred_data[pred_data["client_num"] == client_num]["proba_no_default"].values[0]
+    prediction = pred_data[pred_data["client_num"] == client_num]["prediction"].values[0]
+    
+    # Décision basée sur la prédiction
+    if prediction == 0:
+        verdict = "Demande de crédit acceptée ✅"
+    else:
+        verdict = "Demande de crédit refusée ⛔"
+    
+    # Définir la couleur en fonction du seuil
+    if value > 1 - seuil_predict:
+        color = "green"
+    else:
+        color = "orange"
+    
+    # Créer la jauge Plotly
+    fig = go.Figure(go.Indicator(
+        domain={'x': [0, 1], 'y': [0, 1]},
+        value=value,
+        mode="gauge+number+delta",
+        title={'text': "Score", 'font': {'size': 15}},
+        delta={'reference': 1 - seuil_predict, 'increasing': {'color': "green"}, 'decreasing': {'color': "red"}},
+        gauge={'axis': {'range': [None, 1]},
+               'bar': {'color': color},
+               'threshold': {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 1 - seuil_predict}}))
+    
+    fig.update_layout(autosize=False, width=400, height=350)
+    fig_html = fig.to_html(full_html=False)  # Convertir en HTML
+
+    # Retourner la jauge, la décision et le score
+    return {
+        "fig": fig_html,
+        "verdict": verdict,
+        "score": f"Probabilité de défaut : {(1- value) * 100:.2f}%"
+    }
+
+# Route d'explication des décisions du modèle
+@flask_app.route('/explanation', methods=['POST'])
+def get_explanation():
+    """Renvoie l'explication des décisions du modèle pour un client donné"""
+    try:
+        # Récupérer les données de l'utilisateur
+        item = request.get_json()
+        if not item or "client_num" not in item:
+            return jsonify({"status": "error", "message": "Données invalides. Fournissez un client_num."}), 400
+        
+        client_num = item.get("client_num")
+
+        # Récupérer les données du client
+        client_data = data_test.loc[client_num].values.reshape(1, -1)
+        
+        # Calculer les valeurs SHAP pour le client
+        shap_values = explainer.shap_values(client_data).astype(float)
+        shap.initjs()
+        # Créer un graphique force plot SHAP pour visualiser la contribution des features pour ce client
+        shap_force_plot = shap.force_plot(explainer.expected_value, shap_values[0:], client_data, feature_names=data_test.columns)
+        shap_html = f"<head>{shap.getjs()}</head><body>{shap_force_plot.html()}</body>"
+        
+        # Créer un graphique summary plot SHAP pour visualiser l'importance globale des features
+        shap_summary_plot = shap.summary_plot(shap_values, client_data, feature_names=data_test.columns, show=False)
+        shap_summary_html = shap.get_html()  # Convertir en HTML pour l'affichage dans Streamlit
+        
+        return jsonify({
+            "status": "success",
+            "shap_force_plot": shap_html,
+            "shap_summary_plot": shap_summary_html
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # Lancer l'application Flask
 if __name__ == '__main__':
