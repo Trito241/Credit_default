@@ -74,4 +74,4 @@ jobs:
         if: always()
         run: |
           # Force-push to main on Heroku
-          git push heroku temp_branch:main --force
+          git push heroku temp_branch:main

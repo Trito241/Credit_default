@@ -43,7 +43,7 @@ def create_df_proba(df, seuil:float):
 
 
 model, data_test = load()
-seuil_predict = 0.20  #cf. travaux de modélisation 
+seuil_predict = 0.50  #cf. travaux de modélisation 
 pred_data = create_df_proba(data_test, seuil_predict)
 explainer = shap.LinearExplainer(model, data_test)
 
