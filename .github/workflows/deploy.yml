@@ -3,10 +3,10 @@ name: Deploy and Test
 on:
   push:
     branches:
-      - "temp_branch" 
+      - "main" 
   deployment:
     branches:
-      - "temp_branch"
+      - "main"
 
 jobs:
   test-and-deploy:
