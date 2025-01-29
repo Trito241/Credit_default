@@ -12,4 +12,4 @@ Dans le dossier data se trouvent les fichiers necessaires au backend de l'API:
 - le modèle entrainé sérialisé [model.pkl](data/model.pkl)
 - les features retenus lors de l'entrainement des modèles [input_example.json](data/input_example.json)
 
-Et dans le workflow se trouve le fichier [deploy.yml](.github/workflow/deploy.yml) : fichier qui sert à automatiser le déployement et à 
+Et dans le workflow se trouve le fichier [deploy.yml](.github/workflows/deploy.yml) : fichier qui sert à automatiser le déployement et à 
