@@ -1,6 +1,6 @@
 Ce Projet  a été développé dans le cadre du parcours Data Scientist d'OpenClassrooms en partenariat avec CentralSupélec (RNCP niveau 7)
 
-Ce repository comprend les fichiers nécessaires au déploiement de l'API :
+Ce dépôt comprend les fichiers nécessaires au déploiement de l'API.
 
 - [flask_app.py](flask_app.py) : fichier python API
 - [test_flask_app.py](test_flask_app.py) : fichier de test de l'API
