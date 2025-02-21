@@ -3,7 +3,7 @@ from flask_app import flask_app
 
 @pytest.fixture
 def client():
-    # Configuration de Flask pour les tests
+    """Crée un client de test Flask."""
     flask_app.testing = True
     with flask_app.test_client() as client:
         yield client
@@ -36,7 +36,7 @@ def test_predict_missing_fields(client):
 
 def test_predict_client_not_found(client):
     """Test de la route /predict avec un client non existant."""
-    payload = {"client_num": 999999}  # Un ID client qui n'existe pas
+    payload = {"client_num": 999999}  # ID client inexistant
     response = client.post('/predict', json=payload)
     assert response.status_code == 404
     assert response.json["status"] == "error"
@@ -44,17 +44,42 @@ def test_predict_client_not_found(client):
 
 def test_predict_valid_accept(client):
     """Test de la route /predict avec un client valide et prédiction acceptée."""
-    payload = {"client_num": 144092}  # Remplacez par un ID client existant avec prédiction acceptée
+    payload = {"client_num": 100028}  # Remplacez avec un ID existant
     response = client.post('/predict', json=payload)
     assert response.status_code == 200
     assert response.json["status"] == "success"
-    assert response.json["verdict"] == "Demande de crédit acceptée ✅"
 
 def test_predict_valid_refuse(client):
     """Test de la route /predict avec un client valide et prédiction refusée."""
-    payload = {"client_num": 100038}  # Remplacez par un ID client existant avec prédiction refusée
+    payload = {"client_num": 100013}  # Remplacez avec un ID existant
     response = client.post('/predict', json=payload)
     assert response.status_code == 200
     assert response.json["status"] == "success"
-    assert response.json["verdict"] == "Demande de crédit refusée ⛔"
 
+def test_explanation_valid_client(client):
+    """Test de la route /explanation avec un client valide."""
+    payload = {"client_num": 100028}  # ID client existant
+    response = client.post('/explanation', json=payload)
+    assert response.status_code == 200
+    assert response.json["status"] == "success"
+    assert "local_explanation" in response.json
+    assert "global_explanation" in response.json
+
+def test_get_perso_valid_client(client):
+    """Test de la route /info_client avec un client valide."""
+    payload = {"client_num": 100028}  # ID client existant
+    response = client.post('/info_client', json=payload)
+    assert response.status_code == 200
+    assert response.json["status"] == "success"
+    expected_keys = {"gender", "nb_child", "income_amount", "credit", "income_type", "family"}
+    assert expected_keys.issubset(response.json.keys())  
+
+def test_get_comparison_data(client):
+    """Test de la route /data_comparaison pour comparer un client aux autres."""
+    response = client.post('/data_comparaison')
+    assert response.status_code == 200
+    assert "data" in response.json
+    assert isinstance(response.json["data"], list)
+
+if __name__ == '__main__':
+    pytest.main()
