@@ -18,7 +18,7 @@ import os
 matplotlib.use('Agg')
 
 # Créer une instance de l'application Flask
-flask_app = Flask(__name__, static_url_path='/static', static_folder='.')
+flask_app = Flask(__name__, static_url_path='/static', static_folder='static')
 
 # Spécifiez le chemin vers le fichier model.pkl et le fichier input_example.json
 model_path = './data/model.pkl'
