@@ -29,6 +29,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install -r .github/workflows/requirements.txt
+          pip install matplotlib
 
       # Step 4: Verify required files
       - name: Verify required files
