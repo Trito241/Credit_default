@@ -1,4 +1,5 @@
 import pytest
+import matplotlib
 from flask_app import flask_app
 
 @pytest.fixture
