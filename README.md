@@ -12,4 +12,4 @@ Dans le dossier data se trouvent les fichiers necessaires au backend de l'API:
 - Le modèle entrainé sérialisé [model.pkl](data/model.pkl)
 - Les features retenus lors de l'entrainement des modèles [input_example.json](data/input_example.json)
 
-Dans le workflow se trouve le fichier [deploy.yml](.github/workflows/deploy.yml) : fichier qui sert à automatiser le déployement et à 
+Dans le workflows se trouve le fichier [deploy.yml](.github/workflows/deploy.yml) : fichier qui contient le pipeline de déploiement de l'application sur Héroku
